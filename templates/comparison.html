@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/styles/default.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+        <title>Black and YAPF comparison</title>
+    </head>
+
+    <body>
+        <center>
+            <p style="color: red; font-size: 20px;" id="errors"></p>
+            <div id="container">
+                <div class="code_holder">
+                    <input type="button" id="submit-bttn" onclick="format_code();" class="header" value="FORMAAAAT">
+                    <textarea class="language-plaintext python" id="code_txt">{{to_be_formatted}}</textarea>
+                </div>
+                <div class="code_holder">
+                    <h3 class="header">Black</h3>
+                    <pre><code class="python" id="black_format">{{black_format}}</code></pre>
+                </div>
+                <div class="code_holder">
+                    <h3 class="header">YAPF</h3>
+
+                    <pre><code class="python" id="yapf_format">{{yapf_format}}</code></pre>
+                </div>
+            </div>
+        </center>
+
+    <script type="text/javascript">
+        function format_code() {
+
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", '/format', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({
+                'code':  document.getElementById('code_txt').value
+            }));
+            xhr.onreadystatechange = function() {
+                if (this.readyState == 4) {
+                    var response = xhr.responseText;
+                    data = JSON.parse(response);
+                    document.getElementById('black_format').innerText = data.black;
+                    document.getElementById('yapf_format').innerText = data.yapf;
+                    document.getElementById('errors').innerText = data.errors;
+                    console.log(data);
+                }
+            };
+        }
+
+    </script>
+
+    <style>
+        * {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .code_holder {
+            width: 33%;
+            text-align: left;
+            padding: 10px;
+        }
+
+        #container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .header {
+            padding: 10px;
+            margin: 5px;
+            width: 100%;
+            text-align: center;
+            font-size: 30px;
+        }
+
+        textarea {
+            width: 68vh;
+            height: 80vh;
+            font-family: 'Droid Sans';
+            font-size: 20px;
+        }
+
+        input[type="button"] {
+            border-radius: 15px;
+        }
+    </style>
+    </body>
+</html>
